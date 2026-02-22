@@ -26,9 +26,16 @@ function initializeVotingSupport() {
     injectMemoFields();
 }
 
+function getSlug() {
+    const match = window.location.pathname.match(/^\/([^/]+)\//);
+    return match ? match[1] : 'unknown';
+}
+
 function injectMemoFields() {
     const proposals = document.querySelectorAll('div.proposal4staffvote');
     if (proposals.length === 0) return;
+
+    const slug = getSlug();
 
     chrome.storage.local.get(['memos'], (result) => {
         const memos = result.memos || {};
@@ -40,7 +47,8 @@ function injectMemoFields() {
             if (!titleEl) return;
 
             const title = titleEl.textContent.trim();
-            const savedMemo = memos[title] || '';
+            const key = `${slug}::${title}`;
+            const savedMemo = memos[key] || '';
 
             const memoDiv = document.createElement('div');
             memoDiv.className = 'fortee-memo';
@@ -55,9 +63,9 @@ function injectMemoFields() {
                     chrome.storage.local.get(['memos'], (r) => {
                         const m = r.memos || {};
                         if (textarea.value.trim()) {
-                            m[title] = textarea.value;
+                            m[key] = textarea.value;
                         } else {
-                            delete m[title];
+                            delete m[key];
                         }
                         chrome.storage.local.set({ memos: m });
                     });

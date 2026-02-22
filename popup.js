@@ -91,37 +91,65 @@ function applyFilterToPage() {
     });
 }
 
+function getCurrentSlug(callback) {
+    chrome.tabs.query({ url: 'https://fortee.jp/*' }, (tabs) => {
+        if (tabs.length === 0) {
+            callback(null);
+            return;
+        }
+        const match = tabs[0].url.match(/^https:\/\/fortee\.jp\/([^/]+)\//);
+        callback(match ? match[1] : null);
+    });
+}
+
+function getFilteredMemos(slug) {
+    if (!slug) return allMemos;
+    return Object.fromEntries(
+        Object.entries(allMemos).filter(([key]) => key.startsWith(`${slug}::`))
+    );
+}
+
 function exportAsJSON() {
-    const data = {
-        exportDate: new Date().toISOString(),
-        statistics: {
-            totalMemos: Object.keys(allMemos).length
-        },
-        memos: allMemos
-    };
-    
-    const dataStr = JSON.stringify(data, null, 2);
-    const blob = new Blob([dataStr], { type: 'application/json;charset=utf-8' });
-    downloadFile(blob, `fortee-votes-${Date.now()}.json`);
-    
-    displayStatus('JSON exported successfully!', false);
-    setTimeout(() => clearStatus(), 3000);
+    getCurrentSlug((slug) => {
+        const memos = getFilteredMemos(slug);
+        const data = {
+            exportDate: new Date().toISOString(),
+            ...(slug ? { slug } : {}),
+            statistics: {
+                totalMemos: Object.keys(memos).length
+            },
+            memos
+        };
+
+        const dataStr = JSON.stringify(data, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json;charset=utf-8' });
+        downloadFile(blob, `fortee-votes-${Date.now()}.json`);
+
+        displayStatus('JSON exported successfully!', false);
+        setTimeout(() => clearStatus(), 3000);
+    });
 }
 
 function exportAsCSV() {
-    let csv = 'Title,Memo\n';
+    getCurrentSlug((slug) => {
+        let csv = 'Slug,Title,Memo\n';
 
-    Object.entries(allMemos).forEach(([title, memo]) => {
-        const escapedTitle = `"${title.replace(/"/g, '""')}"`;
-        const escapedMemo = `"${memo.replace(/"/g, '""')}"`;
-        csv += `${escapedTitle},${escapedMemo}\n`;
+        Object.entries(getFilteredMemos(slug)).forEach(([key, memo]) => {
+            const separatorIndex = key.indexOf('::');
+            const entrySlug = separatorIndex !== -1 ? key.substring(0, separatorIndex) : '';
+            const title = separatorIndex !== -1 ? key.substring(separatorIndex + 2) : key;
+            const escapedSlug = `"${entrySlug.replace(/"/g, '""')}"`;
+            const escapedTitle = `"${title.replace(/"/g, '""')}"`;
+            const escapedMemo = `"${memo.replace(/"/g, '""')}"`;
+            csv += `${escapedSlug},${escapedTitle},${escapedMemo}\n`;
+        });
+
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+        downloadFile(blob, `fortee-memos-${Date.now()}.csv`);
+
+        displayStatus('CSV exported successfully!', false);
+        setTimeout(() => clearStatus(), 3000);
     });
-
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
-    downloadFile(blob, `fortee-memos-${Date.now()}.csv`);
-
-    displayStatus('CSV exported successfully!', false);
-    setTimeout(() => clearStatus(), 3000);
 }
 
 function downloadFile(blob, filename) {
