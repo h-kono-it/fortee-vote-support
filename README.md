@@ -98,6 +98,10 @@ fortee-talk-vote-support/
 - 対象ページ: `https://fortee.jp/*`
 - Manifest V3
 
+## リリースについて
+
+`manifest.json`のversionをあげてmainブランチにpushするとzipが作成される
+
 ## ライセンス
 
 [MIT License](LICENSE)

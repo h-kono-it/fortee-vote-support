@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Fortee Talk Vote Support",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Support tool for Fortee conference proposal voting and acceptance",
   "permissions": [
     "storage",

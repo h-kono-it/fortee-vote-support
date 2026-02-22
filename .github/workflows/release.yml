@@ -2,8 +2,8 @@ name: Release
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - main
 
 jobs:
   release:
@@ -16,7 +16,24 @@ jobs:
         with:
           path: fortee-talk-vote-support
 
+      - name: Get version from manifest.json
+        id: version
+        run: |
+          VERSION=$(jq -r .version fortee-talk-vote-support/manifest.json)
+          echo "tag=v${VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Check if tag already exists
+        id: tag_check
+        run: |
+          TAG="${{ steps.version.outputs.tag }}"
+          if git -C fortee-talk-vote-support ls-remote --tags origin | grep -q "refs/tags/${TAG}$"; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Create zip
+        if: steps.tag_check.outputs.exists == 'false'
         run: |
           zip -r fortee-talk-vote-support.zip fortee-talk-vote-support/ \
             -x "fortee-talk-vote-support/sample.html" \
@@ -25,6 +42,8 @@ jobs:
             -x "fortee-talk-vote-support/.git/*"
 
       - name: Create GitHub Release
+        if: steps.tag_check.outputs.exists == 'false'
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ steps.version.outputs.tag }}
           files: fortee-talk-vote-support.zip
