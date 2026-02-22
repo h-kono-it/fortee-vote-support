@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "Fortee Talk Vote Support",
+  "version": "0.1.0",
+  "description": "Support tool for Fortee conference proposal voting and acceptance",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://fortee.jp/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Fortee Proposal Support"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://fortee.jp/*"],
+      "js": ["content.js"],
+      "css": ["content.css"]
+    }
+  ]
+}

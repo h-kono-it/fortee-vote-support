@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>fortee Proposal Support</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🗳️ fortee Talk Vote</h1>
+        
+        <div id="status" class="status-message"></div>
+        
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <h2>投票フィルタ</h2>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">全て</button>
+                <button class="filter-btn" data-filter="voted">投票済み</button>
+                <button class="filter-btn" data-filter="unvoted">未投票</button>
+            </div>
+            <div class="score-filters">
+                <button class="score-btn" data-score="2">+2</button>
+                <button class="score-btn" data-score="1">+1</button>
+                <button class="score-btn" data-score="0">0</button>
+                <button class="score-btn" data-score="-1">-1</button>
+                <button class="score-btn" data-score="-2">-2</button>
+            </div>
+        </div>
+        
+        <!-- Stats Section -->
+        <div class="stats-section">
+            <div class="stat-item">
+                <span class="stat-label">メモ数:</span>
+                <span class="stat-value" id="memo-count">0</span>
+            </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button id="export-btn" class="btn btn-primary">📥 Export JSON</button>
+            <button id="export-csv-btn" class="btn btn-secondary">📊 Export CSV</button>
+        </div>
+        
+<div class="info-section">
+            <p class="version">v0.1.0 MVP - Fortee Talk Vote Support</p>
+        </div>
+    </div>
+    
+    <script src="popup.js"></script>
+</body>
+</html>

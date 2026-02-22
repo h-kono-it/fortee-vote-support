@@ -1,0 +1,30 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: fortee-talk-vote-support
+
+      - name: Create zip
+        run: |
+          zip -r fortee-talk-vote-support.zip fortee-talk-vote-support/ \
+            -x "fortee-talk-vote-support/sample.html" \
+            -x "fortee-talk-vote-support/.github/*" \
+            -x "fortee-talk-vote-support/.gitignore" \
+            -x "fortee-talk-vote-support/.git/*"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: fortee-talk-vote-support.zip

@@ -1,0 +1,187 @@
+/* Content styles injected into Fortee pages */
+
+.fortee-vote-widget {
+    margin: 12px 0;
+    padding: 12px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e8edff 100%);
+    border-radius: 8px;
+    border: 1px solid #dce3f0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.fortee-vote-widget:hover {
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+    border-color: #667eea;
+}
+
+.vote-widget-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #555;
+}
+
+.vote-status {
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-weight: 700;
+    font-size: 14px;
+    background: #fff;
+    border: 2px solid #ddd;
+    color: #999;
+}
+
+.vote-status.voted {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    border-color: #667eea;
+}
+
+.vote-buttons {
+    display: flex;
+    gap: 6px;
+    justify-content: space-between;
+}
+
+.vote-btn {
+    flex: 1;
+    padding: 8px 4px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 700;
+    transition: all 0.2s ease;
+    color: #666;
+}
+
+.vote-btn:hover {
+    border-color: #667eea;
+    background: #f0f4ff;
+    transform: translateY(-2px);
+}
+
+.vote-btn:nth-child(1) { color: #4caf50; } /* +2 Green */
+.vote-btn:nth-child(2) { color: #80bfff; } /* +1 Light Blue */
+.vote-btn:nth-child(3) { color: #999; }    /* 0 Gray */
+.vote-btn:nth-child(4) { color: #ff9800; } /* -1 Orange */
+.vote-btn:nth-child(5) { color: #f44336; } /* -2 Red */
+
+.vote-btn.active {
+    border-color: #667eea;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.memo-widget {
+    display: flex;
+    flex-direction: column;
+}
+
+.memo-widget.has-memo .memo-input {
+    border-color: #ffc107;
+    background: #fffef0;
+}
+
+.memo-input {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 12px;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 60px;
+    background: white;
+    color: #333;
+    transition: all 0.2s ease;
+}
+
+.memo-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+    background: #f8fbff;
+}
+
+.memo-input::placeholder {
+    color: #ccc;
+}
+
+.fortee-memo {
+    margin-top: 8px;
+    padding: 0 4px 8px;
+}
+
+.fortee-memo-input {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 12px;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 52px;
+    background: white;
+    color: #333;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease;
+}
+
+.fortee-memo-input:not(:placeholder-shown) {
+    border-color: #ffc107;
+    background: #fffef0;
+}
+
+.fortee-memo-input:focus {
+    outline: none;
+    border-color: #667eea;
+    background: #f8fbff;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .fortee-vote-widget {
+        background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+        border-color: #4a5568;
+    }
+    
+    .vote-btn {
+        background: #2d3748;
+        color: #cbd5e0;
+        border-color: #4a5568;
+    }
+    
+    .vote-btn:hover {
+        background: #4a5568;
+    }
+    
+    .vote-status {
+        background: #2d3748;
+        border-color: #4a5568;
+        color: #cbd5e0;
+    }
+    
+    .vote-status.voted {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+    }
+    
+    .memo-input {
+        background: #2d3748;
+        border-color: #4a5568;
+        color: #e2e8f0;
+    }
+    
+    .memo-input:focus {
+        border-color: #667eea;
+        background: #1a202c;
+    }
+}
