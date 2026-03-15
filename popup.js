@@ -73,21 +73,13 @@ function getFilteredVotes() {
 }
 
 function applyFilterToPage() {
-    // fortee.jp のタブを URL で直接探してメッセージを送る
-    chrome.tabs.query({ url: 'https://fortee.jp/*' }, (tabs) => {
-        if (tabs.length === 0) {
-            console.log('No Fortee tab found');
-            return;
+    // storage 経由で content script にフィルター状態を伝える
+    // (メッセージパッシングより確実)
+    chrome.storage.local.set({
+        filterState: {
+            type: currentFilter,
+            scores: currentScoreFilter
         }
-
-        chrome.tabs.sendMessage(tabs[0].id, {
-            action: 'apply_filter',
-            filter: currentFilter,
-            scoreFilter: currentScoreFilter,
-            votes: allVotes
-        }).catch(err => {
-            console.log('Could not send message to content script:', err);
-        });
     });
 }
 

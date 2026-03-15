@@ -3,6 +3,11 @@
 
 console.log('Fortee Talk Vote Support: Content script loaded');
 
+// フィルター状態をモジュールスコープで保持
+let activeFilter = 'all';
+let activeScoreFilter = null;
+let filterDebounceTimer = null;
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', initializeVotingSupport);
 
@@ -19,6 +24,13 @@ function initializeVotingSupport() {
     // Vue.js の動的レンダリング後に proposal4staffvote が追加されるのを監視
     const observer = new MutationObserver(() => {
         injectMemoFields();
+        // Vue.js が DOM を再生成した後もフィルターを維持する
+        if (activeFilter !== 'all' || activeScoreFilter) {
+            clearTimeout(filterDebounceTimer);
+            filterDebounceTimer = setTimeout(() => {
+                applyDOMFilter(activeFilter, activeScoreFilter, null);
+            }, 100);
+        }
     });
     observer.observe(document.body, { childList: true, subtree: true });
 
@@ -280,11 +292,24 @@ function scrollToProposal(proposal) {
     proposal.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
-// Listen for messages from popup
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.action === 'apply_filter') {
-        applyDOMFilter(request.filter, request.scoreFilter, request.votes);
-        sendResponse({ success: true });
+// storage 経由でフィルター状態を受け取る（メッセージパッシングより確実）
+chrome.storage.onChanged.addListener((changes, areaName) => {
+    if (areaName === 'local' && changes.filterState) {
+        const { type, scores } = changes.filterState.newValue;
+        activeFilter = type;
+        activeScoreFilter = scores;
+        applyDOMFilter(type, scores, null);
+    }
+});
+
+// 初回ロード時に保存済みのフィルターを適用
+chrome.storage.local.get(['filterState'], (result) => {
+    if (result.filterState && result.filterState.type !== 'all') {
+        const { type, scores } = result.filterState;
+        activeFilter = type;
+        activeScoreFilter = scores;
+        // Vue.js のレンダリングを待ってから適用
+        setTimeout(() => applyDOMFilter(type, scores, null), 500);
     }
 });
 
@@ -322,8 +347,12 @@ function applyDOMFilter(filter, scoreFilter, votes) {
             }
         }
 
-        // 表示/非表示の切り替え
+        // 表示/非表示の切り替え（inline !important → サイトCSS/Vue.js どちらにも勝つ）
         console.log('[ForteeFilter]', { activeBtn: !!activeBtn, currentScore, shouldShow });
-        proposal.style.display = shouldShow ? 'block' : 'none';
+        if (shouldShow) {
+            proposal.style.removeProperty('display');
+        } else {
+            proposal.style.setProperty('display', 'none', 'important');
+        }
     });
 }

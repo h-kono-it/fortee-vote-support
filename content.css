@@ -1,5 +1,10 @@
 /* Content styles injected into Fortee pages */
 
+/* フィルターで非表示にする要素 - !important でサイト側の CSS に負けないようにする */
+.fortee-filtered-hidden {
+    display: none !important;
+}
+
 .fortee-vote-widget {
     margin: 12px 0;
     padding: 12px;
